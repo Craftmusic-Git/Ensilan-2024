@@ -1,0 +1,19 @@
+<div class="h-full min-h-[calc(100vh-32px)]">
+  @if (activatedRoute.firstChild === null) {
+    <div class="h-full min-h-[calc(100vh-32px)] bg-blue-950">
+      <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <section class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+          <div class="flex items-center mb-6 text-2xl">
+            <img class="w-52 h-32 mr-2" src="assets/logo.png" alt="logo">
+          </div>
+          <a [routerLink]="'/games'" class="px-8 py-12 mt-24 rounded-3xl font-bold text-purple-950 bg-white ">Jouer !</a>
+        </section>
+      </div>
+    </div>
+  } @else {
+    <router-outlet/>
+  }
+</div>
+<footer class="bg-black text-white text-center h-[32px]">
+  <p>ENSILAN ©2024 Made with Love <span class="text-red-700"><3</span></p>
+</footer>
