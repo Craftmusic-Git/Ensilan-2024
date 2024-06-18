@@ -1,0 +1,44 @@
+<div class="w-full container mx-auto">
+  <div>
+    <h2 class="text-purple-500 text-2xl font-semibold p-4">Liste des joueurs</h2>
+  </div>
+  <div class="">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table
+        class="border dark:border-gray-700 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th class="px-8 py-4">Prénom</th>
+          <th class="px-8 py-4">Nom</th>
+          <th class="px-8 py-4">Classe</th>
+          <th class="px-8 py-4 w-16">Actions</th>
+        </tr>
+        </thead>
+        @if (!userStore.loading) {
+          <tbody>
+            @for (user of userStore.page.content; track user.id) {
+              <tr
+                class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ user.username }}</td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.userClass }}</td>
+                <td>
+                  <button
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+                    (click)="deleteUser(user.id)"> Supprimer
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        } @else {
+          <tbody>
+            <tr>
+              <td colspan="4" class="text-center p-4">Chargement...</td>
+            </tr>
+          </tbody>
+        }
+      </table>
+    </div>
+  </div>
+</div>

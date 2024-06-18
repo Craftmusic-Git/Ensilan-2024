@@ -1,0 +1,67 @@
+<div class="w-full container mx-auto">
+  <div class="flex w-full justify-between px-4 py-4">
+    <div class="h-16">
+      <h2 class="text-purple-500 text-2xl font-semibold p-4">Liste des parties</h2>
+    </div>
+    <div class="h-16 pt-4">
+      <button
+        class="text-white bg-blue-500 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700"
+        (click)="createGame()"> Créer une partie
+      </button>
+    </div>
+  </div>
+  <div>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table
+        class="border dark:border-gray-700 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th class="px-8 py-4">Nom</th>
+          <th class="px-8 py-4">Status</th>
+          <th class="px-8 py-4">Nombre de joueurs</th>
+          <th class="px-8 py-4">Salle d'attente</th>
+          <th class="px-8 py-4 w-32">Actions</th>
+        </tr>
+        </thead>
+        @if (!gameStore.loading) {
+          <tbody>
+            @for (game of gameStore.page.content; track game.id) {
+              <tr
+                class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <td
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ game.name }}
+                </td>
+                <td>
+                  <div>
+                    {{ game.status }}
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    {{ game.players.length }}
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    {{ game.waitingPlayers.length }}
+                  </div>
+                </td>
+                <td class="flex gap-4 py-2 px-4">
+                  <button [routerLink]="game.id"
+                          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">
+                    Editer
+                  </button>
+                  <button [disabled]="game.status !== 'IN_PREPARATION' && game.status !== 'READY' && game.status !== 'FINISHED'"
+                          (click)="deleteGame(game.id)"
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+                  > Supprimer
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        }
+      </table>
+    </div>
+  </div>
+</div>

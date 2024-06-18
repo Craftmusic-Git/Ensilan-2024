@@ -1,0 +1,125 @@
+@if (currentQuestionSet()) {
+  <form class="w-full container mx-auto py-8" [formGroup]="form" (submit)="onSubmit()">
+    <div class="rounded-lg border border-gray-600 p-4 bg-gray-900">
+      <div class="flex w-full justify-between px-4 py-4">
+        <div class="h-16">
+          <h2 class="text-purple-500 text-2xl font-semibold p-4">Set de questions</h2>
+        </div>
+        <div class="h-16 pt-4">
+          <button type="submit"
+                  class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-400-600 dark:hover:bg-green-700"> Sauvegarder
+          </button>
+        </div>
+      </div>
+      <div class="flex gap-8">
+        <label for="name" class="block mb-2 text-xl font-medium text-purple-500 pt-2">Nom</label>
+        <input
+          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+          id="name" formControlName="name">
+      </div>
+      <div class="py-4">
+        <div class="flex w-full justify-between px-4 py-4">
+          <div class="h-16">
+            <h2 class="text-purple-500 text-2xl font-semibold p-4">Questions</h2>
+          </div>
+          <div class="h-16 pt-4">
+            <button type="button"
+                    class="text-white bg-blue-500 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700"
+                    (click)="addQuestion()"> Ajouter une question
+            </button>
+          </div>
+        </div>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+          <table
+            class="border dark:border-gray-700 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th class="px-8 py-4 w-12">Ordre</th>
+              <th class="px-8 py-4">Question</th>
+              <th class="px-8 py-4 w-28">Action</th>
+            </tr>
+            </thead>
+            <tbody formArrayName="questions">
+              @for (question of questions.controls; track question; let i = $index) {
+                <tr [formGroup]="getQuestionFormGroup(i)"
+                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                  <td
+                    class="px-6 py-4 text-gray-900 font-bold whitespace-nowrap dark:text-white">{{ question.value.order }}
+                  </td>
+                  <td>
+                    <div class="p-2.5">
+                      <textarea
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        formControlName="text"></textarea>
+                    </div>
+                  </td>
+                  <td class="flex gap-4 py-6 px-4">
+                    <button type="button"
+                            class="bg-purple-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+                            (click)="addAnswer(i)">
+                      +
+                    </button>
+                    <button type="button" (click)="deleteQuestion(i)"
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">
+                      Supprimer
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                  </td>
+                  <td colspan="2">
+                    <div>
+                      <table class="w-full">
+                        <thead>
+                        <tr>
+                          <th class="px-8 py-2 w-12">Validitée</th>
+                          <th class="px-8 py-2">Réponses</th>
+                          <th class="px-8 py-2 w-12">Actions</th>
+                        </thead>
+                        <tbody>
+                          @for (answer of getAnswers(i).controls; track answer; let j = $index) {
+                            <tr [formGroup]="getAnswerFormGroup(i, j)">
+                              <td class="gap-4 px-4">
+                                <div class="px-8 py-4">
+                                  <input
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                    type="checkbox" formControlName="isCorrect"/>
+                                </div>
+                              </td>
+                              <td class="gap-4 px-4">
+                                <div class="p-2.5">
+                                  <textarea
+                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    formControlName="text"></textarea>
+                                </div>
+                              </td>
+                              <td class="flex gap-4 px-4">
+                                <div class="py-4">
+                                  <button type="button" (click)="deleteAnswer(i, j)"
+                                          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">
+                                    Supprimer
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </form>
+} @else {
+  <div class="w-full container mx-auto">
+    <h2 class="text-purple-500 text-2xl font-semibold p-4">Chargement...</h2>
+  </div>
+}
+

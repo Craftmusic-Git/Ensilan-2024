@@ -1,0 +1,65 @@
+<div class="h-full min-h-[calc(100vh-32px)] bg-blue-950">
+  <div class="flex flex-col gap-2">
+    <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto md:h-screen lg:py-0">
+      <section class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <div class="flex items-center mb-2 text-2xl">
+          <img class="w-52 h-32 mr-2" src="assets/logo.png" alt="logo">
+        </div>
+      </section>
+    </div>
+    @if (game() != null) {
+      @if (game() != null && game().status != 'IN_PROGRESS') {
+        <div>
+          <div class="flex flex-col gap-4 w-full p-4">
+            <div
+              class="flex justify-between w-full p-4 bg-gray-50 rounded-2xl border border-b-8 border-r-8 border-purple-900 cursor-pointer">
+              <div class="text-xl font-semibold text-purple-950">
+                {{ game().name }}
+              </div>
+              <div [class]="statusClass(game().status) + ' font-bold text-xl'">
+                {{ game().status }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="px-8">
+            <h2 class="text-2xl pb-2 text-white font-semibold">
+              Joueurs : {{ game().players.length }}
+            </h2>
+            @for (player of game().players; track player.id) {
+              <div
+                class="flex justify-between w-full p-4 bg-gray-50 rounded-2xl border border-b-8 border-r-8 border-purple-900 cursor-pointer">
+                <div class="text-xl font-semibold text-purple-950">
+                  {{ player.username }}  {{ player.lastname }}
+                </div>
+                <div class="text-xl font-semibold text-purple-950">
+                  {{ player.userClass }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else if (game().status == 'IN_PROGRESS') {
+        @if (actualQuestion() != null) {
+          <div class="flex flex-col w-full px-2 gap-4">
+            <div
+              class="flex justify-between w-full p-4 bg-gray-50 rounded-2xl border border-b-8 border-r-8 border-purple-900 cursor-pointer">
+              <div class="text-md font-semibold text-purple-950">
+                {{ actualQuestion().text }}
+              </div>
+            </div>
+            @for (answer of actualQuestion().answers; track answer.id) {
+              <button (click)="selectAnswer(answer.id)" [disabled]="lockResponse()"
+                      [class]="calculateButtonBackground(answer) + ' flex justify-between w-full p-4 rounded-2xl border border-b-4 border-r-4 border-white cursor-pointer'">
+                <div class="text-md font-semibold text-white">
+                  {{ answer.text }}
+                </div>
+              </button>
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

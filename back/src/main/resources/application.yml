@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: back
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ensilan}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:root}
+
+app:
+  api-key:
+    key: ${API_KEY:secret}

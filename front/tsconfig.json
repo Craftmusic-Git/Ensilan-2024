@@ -1,0 +1,51 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@admin/*": ["./src/app/admin/*"],
+      "@bo/*": ["./src/app/bo/*"],
+      "@core/*": ["./src/app/core/*"],
+      "@components/*": ["./src/app/core/components/*"],
+      "@directives/*": ["./src/app/core/directives/*"],
+      "@domain/*": ["./src/app/core/domain/*"],
+      "@guards/*": ["./src/app/core/guards/*"],
+      "@i18n/*": ["./src/app/core/i18n/*"],
+      "@pipes/*": ["./src/app/core/pipes/*"],
+      "@services/*": ["./src/app/core/services/*"],
+      "@stores/*": ["./src/app/core/stores/*"],
+      "@utils/*": ["./src/app/core/utils/*"],
+      "@030_croisieurope/croisi-front-library/*": [
+        "./node_modules/@030_croisieurope/croisi-front-library/*"
+      ]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true,
+  }
+}

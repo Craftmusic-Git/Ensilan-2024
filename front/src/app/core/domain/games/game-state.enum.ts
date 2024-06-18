@@ -1,0 +1,6 @@
+export enum GameStateEnum {
+  IN_PREPARATION = 'IN_PREPARATION',
+  READY = 'READY',
+  IN_PROGRESS = 'IN_PROGRESS',
+  FINISHED = 'FINISHED',
+}

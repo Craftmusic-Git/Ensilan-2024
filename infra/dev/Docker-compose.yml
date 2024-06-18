@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'ensilan'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-db:/var/lib/mysql
+
+  postgres:
+    image: postgres:16.3
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_PASSWORD: 'root'
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '3307:8080'
+volumes:
+  mysql-db:
+  postgres-db:

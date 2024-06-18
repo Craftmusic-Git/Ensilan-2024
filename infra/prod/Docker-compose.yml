@@ -1,0 +1,79 @@
+version: '3.3'
+
+services:
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    restart: always
+    command:
+      - "--log.level=INFO"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'ensilan'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    volumes:
+      - ensilan-db:/var/lib/mysql
+
+  question-server:
+    image: michelstegmiller/questions-server:latest
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_USERNAME: 'ensilan'
+      DB_PORT: '3306'
+      DB_PASSWORD: 'password'
+    ports:
+      - '8081:8080'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.question-server.rule=Host(`api.ensilan`)"
+      - "traefik.http.routers.question-server.entrypoints=web"
+      - "traefik.http.services.question-server.loadbalancer.server.port=8081"
+    depends_on:
+      - db
+
+  question-front:
+    image: michelstegmiller/questions-front:latest
+    restart: always
+    environment:
+      QUESTION_SERVER_URL: question-server
+      QUESTION_SERVER_PORT: '8080'
+    ports:
+      - '3000:3000'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.question-front.rule=Host(`ensilan`)"
+      - "traefik.http.routers.question-front.entrypoints=web"
+      - "traefik.http.services.question-front.loadbalancer.server.port=3000"
+    depends_on:
+      - question-server
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '3307:8080'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`adminer.local`)"
+      - "traefik.http.routers.adminer.entrypoints=web"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+
+volumes:
+  ensilan-db:

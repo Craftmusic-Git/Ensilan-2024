@@ -1,0 +1,207 @@
+@if (game()) {
+  <form class="w-full flex flex-col gap-8 container mx-auto py-8" [formGroup]="form">
+    <div class="w-full rounded-lg border border-gray-600 p-4 bg-gray-900">
+      <div class="flex w-full justify-between px-4 py-4">
+        <div class="flex items-center">
+          <h2 class="text-white text-2xl font-semibold p-4">Partie</h2>
+          <div
+            [class]="statusClass(game().status) + ' text-xl border border-white bg-blue-950 rounded-xl p-2'">{{ game().status }}
+          </div>
+        </div>
+        <div class="h-16 pt-4">
+          <button (click)="update()"
+                  class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-400-600 dark:hover:bg-green-700">
+            Sauvegarder
+          </button>
+        </div>
+      </div>
+      <div class="flex gap-8 w-full">
+        <div class="w-full">
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">Nom</label>
+          <input
+            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+            id="name" formControlName="name">
+        </div>
+        <div class="w-full">
+          <label for="questionSet" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">Set de
+            question</label>
+          <select formControlName="questionSet" id="questionSet"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            @for (key of questionsSet(); track key) {
+              <option [value]="key.id">{{ key.name }} - {{ key.questions.length }} questions</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full rounded-lg border border-gray-600 p-4 bg-gray-900">
+      <div class="h-12">
+        <h2 class="text-white text-2xl font-semibold p-4">Controles</h2>
+      </div>
+      <div class="flex w-full items-stretch gap-4 pb-2 pt-4">
+        <div class="flex w-full gap-4">
+          <button type="button" (click)="startGame()" [disabled]="game().status !== 'READY'"
+                  class="w-40 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-green-600 hover:bg-green-700 disabled:bg-green-900">
+            Commencer
+          </button>
+          <button type="button" (click)="diffuse()" [disabled]="game().status !== 'IN_PROGRESS' && game().status !== 'READY'"
+                  class="w-40 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900">
+            Diffuser
+          </button>
+          <button type="button" (click)="sendNextQuestion()" [disabled]="game().status !== 'IN_PROGRESS'"
+                  class="w-40 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900">
+            Prochaine question
+          </button>
+          <button type="button" (click)="unlockAnswers()" [disabled]="game().status !== 'IN_PROGRESS'"
+                  class="w-40 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-cyan-600 hover:bg-cyan-700 disabled:bg-cyan-900">
+            Débloquer les réponses
+          </button>
+          <button type="button" (click)="showAnswer()" [disabled]="game().status !== 'IN_PROGRESS'"
+                  class="w-40 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-900">
+            Montrer la réponse
+          </button>
+        </div>
+
+        <button type="button" (click)="endGame()" [disabled]="game().status !== 'IN_PROGRESS'"
+                class="w-40 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-600 hover:bg-red-700 disabled:bg-red-900">
+          Fin de la partie
+        </button>
+      </div>
+      <div>
+        <div>
+          <h2 class="text-white text-2xl font-semibold p-4">Question actuelle</h2>
+          @if (actualQuestion()) {
+            <div class="p-4">
+              <div class="w-full text-center text-xl text-white">
+                {{ actualQuestion().text }}
+              </div>
+              <div class="py-2 flex">
+                @for (answer of actualQuestion().answers; track answer.id) {
+                  <div [class]="(answer.isCorrect ? 'text-green-600': 'text-white') + ' text-center w-full'">
+                    {{ answer.text }}
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="w-full text-center text-md text-white">
+              Pas de question
+            </div>
+          }
+        </div>
+        <div>
+          <h2 class="text-white text-2xl font-semibold p-4">Question prochaine</h2>
+          @if (nextQuestion()) {
+            <div class="p-4">
+              <div class="px-2 w-full text-xl text-white">
+                {{ nextQuestion().text }}
+              </div>
+              <div class="py-2 flex">
+                @for (answer of nextQuestion().answers; track answer.id) {
+                  <div [class]="(answer.isCorrect ? 'text-green-600': 'text-white') + ' text-center w-full'">
+                    {{ answer.text }}
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="w-full text-center text-md text-white">
+              Pas de question
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <div class="w-full rounded-lg border border-gray-600 p-4 bg-gray-900">
+      <div class="pb-2">
+        <h2 class="text-white text-2xl font-semibold p-4">Joueurs</h2>
+      </div>
+      @if (gameResultStore.isReady()) {
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table
+            class="border dark:border-gray-700 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th class="px-8 py-4">Prénom</th>
+              <th class="px-8 py-4">Nom</th>
+              <th class="px-8 py-4">Classe</th>
+              <th class="px-8 py-4">Nb. points</th>
+              <th class="px-8 py-4">Tps. rép. moy.</th>
+              <th class="px-8 py-4 w-16">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (user of game().players; track user.id) {
+                <tr
+                  class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                  <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ user.username }}
+                  </td>
+                  <td>{{ user.lastname }}</td>
+                  <td>{{ user.userClass }}</td>
+                  <td>{{ getUserScore(user.id) }}</td>
+                  <td>{{ getUserAverageResponseTime(user.id) }} ms</td>
+                  <td>
+                    <button type="button" (click)="removePlayerFromGame(user)"
+                            class="min-h-10 min-w-10 text-white bg-red-500 hover:bg-red-700 font-bold rounded-lg text-sm px-3 py-1.5 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                      -
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <div class="w-full rounded-lg border border-gray-600 p-4 bg-gray-900">
+      <div class="pb-2">
+        <h2 class="text-white text-2xl font-semibold p-4">Salle d'attente</h2>
+      </div>
+      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table
+          class="border dark:border-gray-700 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th class="px-8 py-4">Prénom</th>
+            <th class="px-8 py-4">Nom</th>
+            <th class="px-8 py-4">Classe</th>
+            <th class="px-8 py-4 w-16">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (user of game().waitingPlayers; track user.id) {
+              <tr
+                class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ user.username }}
+                </td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.userClass }}</td>
+                <td class="flex gap-2 p-2">
+                  <button type="button" (click)="addPlayerFromGame(user)"
+                          class="min-h-10 min-w-10 text-white bg-blue-500 hover:bg-blue-700 font-bold rounded-lg text-sm px-3 py-1.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">
+                    +
+                  </button>
+                  <button type="button" (click)="removePlayerFromWaitingList(user)"
+                          class="min-h-10 min-w-10 text-white bg-red-500 hover:bg-red-700 font-bold rounded-lg text-sm px-3 py-1.5 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                    -
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </form>
+} @else {
+  <div class="flex justify-center items-center h-full">
+    <div class="text-center">
+      <div class="text-4xl font-bold text-gray-800 dark:text-white">Chargement</div>
+    </div>
+  </div>
+}
